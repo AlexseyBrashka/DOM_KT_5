@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM_KT_5</title>
+</head>
+<style>
+    .form-container{
+        width: max-content;
+    }
+    .form-container form{
+        height: max-content;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        width: auto;
+    }
+    .form-container input{
+        height: max-content;
+        width: 500px;
+    }
+    .cart-container{
+        position: relative;
+        visibility: visible;
+        width: 500px;
+        height: auto;
+    }
+    .errors-container{
+        background-color:blueviolet;
+        position: static;
+        visibility: hidden;
+        width: 500px;
+        height: auto;
+    }
+    p{
+        color: wheat;
+        position: absolute;
+        z-index: 100;
+    }
+    .cart-container .MMYY{
+        position: absolute;
+        right: 50px;
+        bottom: 100px;
+    }
+    .cart-container .MMYY{
+        position: absolute;
+        right: 50px;
+        bottom: 100px;
+    }
+    p img{
+        z-index: 200;
+    }
+    .cart-container .NameBank{
+        position: absolute;
+        left: 100px;
+        top: 100px;
+    }
+    .cart-container .NameType{
+        position: absolute;
+        top: 250px;
+        right: -80px;
+        bottom: 100px;
+    }
+    .cart-container .CartNumber{
+        position: absolute;
+        top: 225px;
+        left: 300px;
+    }
+    .cart-container .NameUser{
+        position: absolute;
+        top: 325px;
+        left: 100px;
+    }
+    table{
+        border-collapse: collapse;
+        border: 2px solid rgb(0, 0, 0);
+        font-family: sans-serif;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+    }
+    th,td {
+        border: 1px solid rgb(0, 0, 0);
+        padding: 8px 10px;
+    }
+
+</style>
+<body>
+    <div class="form-container">
+    <form id="BankCart">
+        <input type="text" name="BankName" placeholder="Имя банка">
+        <input type="text" name="PayType" placeholder="Тип платежной системы">
+        <input type="text" name="NumberCart" placeholder="Номер карты">
+        <input type="text" name="name" placeholder="Имя держателя карты">
+        <input type="text" name="MonthAndYear" placeholder="Месяц и год окончания карты (MM/YY)">
+        <button type="submit">Отправить</button>
+    </form>
+    <div class="helper"></div>
+</div>
+    <div class="cart-container">
+        <p class="NameBank"><img src="https://i.imgur.com/Hx775bT.png"></p>
+        <p class="NameType"><img src="https://i.imgur.com/Hx775bT.png"></p>
+        <p class="CartNumber">Номер Карты</p>
+        <p class="NameUser">Имя Владельца</p>
+        <p class="MMYY">MM/YY</p>
+        <img src="https://i.imgur.com/gNZGJOV.png">
+    </div>
+    <table id="Data">
+    <tr>
+        <th>Имя банка</th>
+        <th>Тип платежной системы</th>
+        <th>Номер карты</th>
+        <th>Имя держателя карты</th>
+        <th>Месяц и год окончания карты</th>
+    </tr>
+    </table>
+<script>
+    function getBody(){
+        const body = {}
+        let errors = []
+	        for (let i = 0; i < form.elements.length; i++) {
+	        	let el = form.elements[i];
+	        	if (el.name) {
+	        		body[el.name] = el.value;
+	        	}
+	        }
+            if (!(body.BankName.toLowerCase() == 'sber' || body.BankName.toLowerCase() == 'tinkoff' )){
+                body.BankName = 'Банк не опознан'
+                errors.push(body.BankName)
+            }else{
+                body.BankName= body.BankName.toLowerCase() 
+            }
+            if (!(body.PayType.toLowerCase() == 'visa' || body.PayType.toLowerCase() == 'mastercard' )){
+                body.PayType = 'Платежная система не опознана'
+                errors.push(body.PayType)
+            }else{
+                body.PayType= body.PayType.toLowerCase() 
+            }
+            if (body.NumberCart.length !=16 ){
+                body.NumberCart = 'Неверно введен номер карты'
+                errors.push(body.NumberCart)
+            }
+            if (body.name.length <1 ){
+                body.name = 'Имя должно иметь 1 или более символ'
+                errors.push(body.name)
+            }
+            reg = /\d{2}\/\d{2}/gi
+            reg2 = /\d{2}/gi
+            let array = body.MonthAndYear.match(reg)
+            if ( reg.test(body.MonthAndYear) != true){
+                body.MonthAndYear = 'Месяц и год окончания карты веден некоретно'
+                errors.push(body.MonthAndYear)
+            }else if (Number.parseInt(array[0])>12 ){
+                body.MonthAndYear = 'Месяц окончания карты введен некорректно'
+                errors.push(body.MonthAndYear)
+            }
+        return [body,errors]
+    }
+        const form = document.forms.BankCart;
+        form.addEventListener("input", function(e) {
+	        e.preventDefault()
+            let container = document.getElementsByClassName('cart-container')[0]
+            const get = getBody()
+            const body = get[0]
+            const errors = get[1]
+            NameBank= document.getElementsByClassName('NameBank')[0];
+            NameType=document.getElementsByClassName('NameType')[0];
+            CartNumber=document.getElementsByClassName('CartNumber')[0];
+            NameUser=document.getElementsByClassName('NameUser')[0];
+            MyMMYY=document.getElementsByClassName('MMYY')[0];
+            if (!(body.NumberCart == 'Неверно введен номер карты')){
+                CartNumber.textContent = body.NumberCart
+            }else{
+                CartNumber.textContent = 'Неверно введен номер карты'
+            }
+            if (body.MonthAndYear != 'Месяц окончания карты введен некорректно' && body.MonthAndYear != 'Месяц окончания карты введен некорректно'){
+                MyMMYY.textContent = body.MonthAndYear
+            }else{
+                MyMMYY.textContent = 'MM/YY'
+            }
+            if (body.name != 'Имя должно иметь 1 или более символ'){
+                NameUser.textContent = body.name
+            }else{
+                NameUser.textContent = 'Имя Владельца'
+            }
+            if (body.BankName.toLowerCase() == 'sber'){
+                NameBank.innerHTML = '<img src="https://i.imgur.com/79CLAmQ.png">'
+            }
+            else if(body.BankName.toLowerCase() == 'tinkoff' ){
+                NameBank.innerHTML = '<img src="https://i.imgur.com/Zo6Fpwo.png">'
+            }
+            else{
+                NameBank.innerHTML = '<img src="https://i.imgur.com/Hx775bT.png">'
+            }
+            if (body.PayType.toLowerCase() == 'visa'){
+                NameType.innerHTML = '<img src="https://i.imgur.com/d62hmYC.png">'
+            }
+            else if(body.PayType.toLowerCase() == 'mastercard' ){
+                NameType.innerHTML = '<img src="https://i.imgur.com/AtNcTtc.png">'
+            }
+            else{
+                NameType.innerHTML = '<img src="https://i.imgur.com/Hx775bT.png">'
+            }
+            
+        })
+        form.addEventListener("submit", function(e) {
+            let table = document.getElementById('Data')
+            container = document.getElementsByClassName('cart-container')[0]
+            let existsError = document.getElementsByClassName('errors-container')
+	        e.preventDefault()
+            const get = getBody()
+            const body = get[0]
+            const errors = get[1]
+            form.reset()
+            if (errors.length == 0){
+                let keys = Object.keys(body);
+                let tr = document.createElement('tr')
+                for (i=0;i<keys.length;i++){
+                       let elem = document.createElement('th')
+                       elem.textContent  = body[keys[i]]
+                       tr.appendChild(elem)
+                    }
+                table.appendChild(tr)
+            }else {
+                alert('Проверьте ввод!')
+            }
+            container.innerHTML = `<p class="NameBank"><img src="https://i.imgur.com/Hx775bT.png"></p>
+        <p class="NameType"><img src="https://i.imgur.com/Hx775bT.png"></p>
+        <p class="CartNumber">Номер Карты</p>
+        <p class="NameUser">Имя Владельца</p>
+        <p class="MMYY">MM/YY</p>
+        <img src="https://i.imgur.com/gNZGJOV.png">`
+        })
+
+</script>
+</body>
+</html>
